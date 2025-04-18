@@ -1,0 +1,11 @@
+[
+    {
+        "model": "llama3-8b-8192",
+        "api_key": "GROQ_API_KEY",
+        "api_type": "groq"
+    },
+    {
+        "model": "gpt-3.5-turbo",
+        "api_key": "OPENAI_API_KEY"
+    }
+]

@@ -10,8 +10,8 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 llm_config_openApi = {
-    # "model": "gpt-3.5-turbo",
-    "model": "gpt-4o",
+    "model": "gpt-3.5-turbo",
+    # "model": "gpt-4o",
     "api_key": OPENAI_API_KEY
 }
 
@@ -34,12 +34,17 @@ class BddGenerator:
         self.assistant = AssistantAgent(
             name="assistant",
             system_message="""You are expert in writting BDD Test cases in gherkin language, for the API with the given context, API parameters, API information 
-            Get the information from the context Generate the requested content based on the context. Dont provide anything Extra. Only provide the details for the Given API URL - """+apiUrl+
-            """Also you have to write the test cases in gherkin language and validate the test cases are in  gherkin language before responding
+            Get the information from the context Generate the requested content based on the context. Dont provide anything Extra. 
+            
+            Only provide the details for the Given API URL - """+apiUrl+
+            """ You will get the Context for the URL """+apiUrl+
+            """
+            And if the context dont have the details on the mentione URL here.. then ask the RAG Agent to update the context.
+            Also you have to write the test cases in gherkin language and validate the test cases are in  gherkin language before responding
             The test cases should be Autonomous and independent. 
             If required have presetup Ex: For duplicate/existing check condition as part of setup create first then create second time.
             Sample Test Data: """+test_data+"""
-Once BDD test cases are generated in gherkin language then CALL the function feature_file_Writer 
+            Once BDD test cases are generated in gherkin language then CALL the function feature_file_Writer 
         and pass the api url and BDD test cases as arguments.
 
             Return TERMINATE when you are done """,
@@ -50,7 +55,7 @@ Once BDD test cases are generated in gherkin language then CALL the function fea
             name="ragproxyagent",
             human_input_mode="NEVER",
             llm_config=llm_config ,
-            max_consecutive_auto_reply=2,
+            max_consecutive_auto_reply=5,
             system_message="Assistant who has extra content retrieval power for solving difficult problems",
             code_execution_config=False,
             is_termination_msg=lambda msg: msg.get("content") is not None and "TERMINATE" in msg["content"],
@@ -61,12 +66,15 @@ Once BDD test cases are generated in gherkin language then CALL the function fea
                 "docs_path": os.getenv('FUNCTIONAL_DOCS_PATH'),
                 "embedding_function": openai_ef,
                 "get_or_create": True,
-                "chunk_token_size": 1500,
-                "top_k": 2 ,  
-                "chunk_overlap": 500,                
+                "chunk_token_size": 500,
+                "context_max_tokens": 500,
+                "top_k": 1,  
+                "chunk_overlap": 100,                
                 "embedding_model": "text-embedding-ada-002",
                 "model":  'gpt-4o', 
                 "vector_db": "chroma",
+                "collection_name": "functional_docsV1",
+                
                 "overwrite": True,  # set to True if you want to overwrite an existing collection
             
                 }
@@ -83,17 +91,17 @@ Once BDD test cases are generated in gherkin language then CALL the function fea
         self.assistant.reset()
         chat_history = self.ragproxyagent.initiate_chat(self.assistant, message=self.ragproxyagent.message_generator, problem=problem).chat_history
 
-    #     if chat_history and len(chat_history) > 0:
-    # # Iterate through the chat history to find the last assistant message.
-    #         last_assistant_message = None
-    #         for message in reversed(chat_history):
-    #             if message.get("name") == "assistant":
-    #                 last_assistant_message = message
-    #                 break
-    #         if last_assistant_message and last_assistant_message.get("content"):
-    #                 return last_assistant_message["content"]
-    #         else:
-    #             return ""
+        if chat_history and len(chat_history) > 0:
+    # Iterate through the chat history to find the last assistant message.
+            last_assistant_message = None
+            for message in reversed(chat_history):
+                if message.get("name") == "assistant":
+                    last_assistant_message = message
+                    break
+            if last_assistant_message and last_assistant_message.get("content"):
+                    return last_assistant_message["content"]
+            else:
+                return ""
 
 
 # qa_system = QuestionAnsweringSystem()

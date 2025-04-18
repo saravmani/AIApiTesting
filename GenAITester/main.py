@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+# from pytestexplore.generated.BDD.TestRunner import run_pytest_in_current_directory
 from modules.TestCasesSelfHealer import TestCasesSelfHealer
 from modules.BDDSelfHealer import BDDSelfHealer
 from modules.ModifiedBddFinder import ModifiedBddFinder
@@ -8,8 +9,11 @@ from modules.APITestCaseGenerator import APITestCaseGenerator
 from modules.BDDGenerator import BddGenerator
 from Tools.TestDataGeneratorTool import SwaggerTestDataGenerator
 import json
+  
 load_dotenv()
  
+
+# run_pytest_in_current_directory()
 
 def remove_code_blocks(text, lang): 
   text = text.replace("```"+lang, "")
@@ -19,32 +23,32 @@ def remove_code_blocks(text, lang):
 
 
 
-input(
-    "\n👋 Hi! I am your Gen AI Tool.\n"
-    "I can help you with the following:\n"
-    "• Generate automated BDD Features and PyTest test cases\n"
-    "• Assist in Self-Healing of existing BDD and PyTest test cases\n\n"
-    "➡️ Press Enter to get started..."
-)
+# input(
+#     "\n👋 Hi! I am your Gen AI Tool.\n"
+#     "I can help you with the following:\n"
+#     "• Generate automated BDD Features and PyTest test cases\n"
+#     "• Assist in Self-Healing of existing BDD and PyTest test cases\n\n"
+#     "➡️ Press Enter to get started..."
+# )
 
-user_input_choice = input(
-    "\nPlease select an option to proceed:\n"
-    "1️⃣  Generate BDD and PyTest test cases for your API\n"
-    "2️⃣  Generate PyTest test cases for existing BDD test cases\n"
-    "3️⃣  Self-heal your existing BDD and PyTest test cases\n\n"
-    "Enter your choice (1/2/3): "
-)
-
-
+# user_input_choice = input(
+#     "\nPlease select an option to proceed:\n"
+#     "1️⃣  Generate BDD and PyTest test cases for your API\n"
+#     "2️⃣  Generate PyTest test cases for existing BDD test cases\n"
+#     "3️⃣  Self-heal your existing BDD and PyTest test cases\n\n"
+#     "Enter your choice (1/2/3): "
+# )
 
 
-
-api_base_url = input("\n🔗 Enter the base API URL (e.g., http://localhost:8080): ")
-api_swagger_url = input("📄 Enter the OpenAPI/Swagger URL (e.g., http://localhost:8080/v3/api-docs): ")
+user_input_choice="1"
 
 
-# api_base_url=   "http://localhost:8080"
-# api_swagger_url =  "http://localhost:8080"+"/v3/api-docs"
+# api_base_url = input("\n🔗 Enter the base API URL (e.g., http://localhost:8080): ")
+# api_swagger_url = input("📄 Enter the OpenAPI/Swagger URL (e.g., http://localhost:8080/v3/api-docs): ")
+
+
+api_base_url=   "http://localhost:8080"
+api_swagger_url =  "http://localhost:8080"+"/v3/api-docs"
 
 
 print("\n📡 Accessing OpenAPI documentation to analyze API endpoints and parameters...")
@@ -70,9 +74,9 @@ if user_input_choice=="1":
 
       # BddGenerator:
       bdd_generator = BddGenerator(api_url,test_data)
-      task_statement = "Generate BDD Test cases in gherkin language, for the API with the given context, API parameters, API information. Api URL :  "+api_url
+      task_statement = "Api URL - `"+api_url+"`"
       answer = bdd_generator.generate_bdd_test_cases(task_statement)
-      cleaned_text = remove_code_blocks(answer,"gherkin")
+      cleaned_text = ""
     
     except Exception as e:
               print(f"Error generating BDD test cases: {e}")

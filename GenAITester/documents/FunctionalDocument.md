@@ -44,11 +44,24 @@ This document covers the functionalities defined in the Swagger document, includ
         * `password` (string, required)
     * **Output:** On Successful login the API will return a json { "token": "<bearer token value>" }
     * **Security:** Requires no authentication.
-* **4.1.3. User Update (`/api/users/update` - POST)**
+
+
+* **4.1.3. User Update 
+    API URL - `/api/users/update` - POST
     * **Description:** Allows users to update their profile information.
+    * User ony can update Email. not the other details
     * **Input:** A JSON object conforming to the `User` schema, containing the updated user information.
+        * Below fields are required for an API
+            "name": "string",
+            "password": "string",
+            "email": "string",
+            "countryCode": "string",
+            "phoneNumber": "string",
+            "address": "string",
     * **Output:** A string indicating the success or failure of the update.
     * **Security:** Requires Bearer token authentication.
+
+
 * **4.1.4. Password Reset (`/api/auth/password-reset` - POST)**
     * **Description:** Allows users to reset their password.
     * **Input:** A JSON object conforming to the `ResetPasswordRequest` schema, containing:
@@ -134,7 +147,7 @@ This document covers the functionalities defined in the Swagger document, includ
 ## 5. Data Structures
 
 * **User:** Represents user information.
-* **Account:** Represents account information.
+* **Account:** Represents account information of the user **
 * **Token:** Represents authentication token information.
 * **LoginRequest:** Represents login credentials.
 * **ResetPasswordRequest:** Represents password reset request.
@@ -148,19 +161,3 @@ This document covers the functionalities defined in the Swagger document, includ
 * Bearer token authentication is required for all account management and dashboard access endpoints.
 * Password hashing and secure storage must be implemented.
 * Input validation and sanitization must be performed to prevent security vulnerabilities.
-
-## 7. Error Handling
-
-* The API should return appropriate error messages for invalid requests, authentication failures, and other errors.
-* Consistent error codes and formats should be used.
-
-## 8. Non-Functional Requirements
-
-* The API should be performant and scalable.
-* The API should be reliable and available.
-* The API should be well-documented.
-
-## 9. Deployment
-
-* The API should be deployed on a secure and reliable server.
-* The server url for development is : `http://localhost:8080`.
